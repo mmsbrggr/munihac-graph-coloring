@@ -36,11 +36,11 @@ selection temp g old new =
 boltzmann :: Int -> Int -> Temp -> Float
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
-changeTemperature :: Temp -> Time -> Temp
-changeTemperature = undefined
+changeTemperature :: Temp -> Temp
+changeTemperature = (*0.9)
 
-stopTemperatureCycle :: a -> Bool
-stopTemperatureCycle = undefined
+stopTemperatureCycle :: Int -> Bool
+stopTemperatureCycle = (> 1000)
 
 stop :: a -> Bool
 stop = undefined
