@@ -1,7 +1,10 @@
 module SimulatedAnnealing where
 
-import Data.Vector
-import Problem
+import qualified Data.Vector as V
+import           Data.Matrix
+import           Data.List
+import           System.Random
+import           Problem
 
 type OldColoring = Coloring
 type NewColoring = Coloring
@@ -10,27 +13,44 @@ type Time        = Int
 
 initialCandidate :: Graph -> Int -> IO Coloring
 initialCandidate g numberOfColors = do
-    colors   <- getStdGen >>= randomRs (1, numberOfColors)
-    coloring <- fromList $ take (nrows g) colors
+    gen <- getStdGen
+    let colors = randomRs (1, numberOfColors)
+    let coloring = V.fromList $ take (nrows g) colors
     pure coloring
 
 neighbor :: Graph -> Int -> Coloring -> IO Coloring
 neighbor g numberOfColors = do
-    gen <- getStdGen
-    v <- randomR (0, (nrows g) - 1) gen
-    c <- randomR (1, numberOfColors) gen 
+    gen      <- getStdGen
+    (v, gen) <- randomR (0, (nrows g) - 1) gen
+    (c, gen) <- randomR (1, numberOfColors) gen 
+    pure undefined
 
 initTemperature :: Temp 
 initTemperature = undefined
 
-selection :: Graph -> OldColoring -> NewColoring -> IO Coloring
-selection = undefined
+selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
+selection temp g old new =
+    if newScore > oldScore then pure new else resultScore
+    where
+        newScore :: Int
+        newScore = numberOfConflicts g new
 
-changeTemperature :: Temp -> Time -> Temp
-changeTemperature = undefined
+        oldScore :: Int
+        oldScore = numberOfConflicts g old
 
-stopTemperatureCycle :: a -> Bool
-stopTemperatureCycle = undefined
+        resultScore :: IO Coloring
+        resultScore = do
+            random <- randomIO :: IO Float
+            if random < boltzmann newScore oldScore temp then pure new else pure old
+
+boltzmann :: Int -> Int -> Temp -> Float
+boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
+
+changeTemperature :: Temp -> Temp
+changeTemperature = (*0.9)
+
+stopTemperatureCycle :: Int -> Bool
+stopTemperatureCycle = (> 1000)
 
 stop :: a -> Bool
 stop = undefined

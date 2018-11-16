@@ -38,7 +38,7 @@ number = stripped number'
 header :: Parser ()
 header = P.skipMany (skipLineOfType 'c')
   where
-    skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> void P.endOfLine
+    skipLineOfType c = lineType c <* P.manyTill P.anyChar P.endOfLine
 
 fileInfo :: Parser Int
 fileInfo = lineType 'p' *> P.string "edge " *> number <* P.manyTill P.anyChar P.endOfLine

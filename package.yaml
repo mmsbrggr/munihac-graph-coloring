@@ -26,6 +26,7 @@ dependencies:
 - matrix
 - vector
 - parsec
+- random
 
 library:
   source-dirs: src
