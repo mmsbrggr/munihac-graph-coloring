@@ -6,6 +6,11 @@ import qualified Data.Vector as V
 type Graph    = Matrix Int
 type Coloring = V.Vector Int
 
+maxDegree :: Graph -> Int
+maxDegree g = foldr (\r md -> max md $ maxOfRow r) 0 [1..nodes]
+    where maxOfRow r = V.maximum $ getRow r g
+          nodes      = nrows g
+
 numberOfColors :: Coloring -> Int
 numberOfColors = V.maximum
 
