@@ -25,6 +25,8 @@ dependencies:
 - text
 - matrix
 - vector
+- QuickCheck
+- hspec
 
 library:
   source-dirs: src
@@ -40,3 +42,13 @@ executables:
     dependencies:
     - graphcoloring
 
+tests:
+  graphcoloring-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependecies:
+    - graphcoloring
