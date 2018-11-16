@@ -2,14 +2,16 @@ module Problem where
 
 import Data.Matrix
 import qualified Data.Vector as V
+import qualified Debug.Trace as T
 
 type Graph    = Matrix Int
 type Coloring = V.Vector Int
 
 maxDegree :: Graph -> Int
-maxDegree g = foldr (\r md -> max md $ maxOfRow r) 0 [1..nodes]
-    where maxOfRow r = V.maximum $ getRow r g
-          nodes      = nrows g
+maxDegree g = maximum $ multStd g vector
+    where
+        nodes = nrows g
+        vector = fromList nodes 1 (repeat 1)
 
 numberOfColors :: Coloring -> Int
 numberOfColors = V.maximum

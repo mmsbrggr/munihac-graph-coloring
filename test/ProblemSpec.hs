@@ -27,6 +27,10 @@ spec = do
     describe "numberOfConflicts" $ do
         it "should return the right amount of conflicts" $
             numberOfConflicts toyGraph coloring1 `shouldBe` 2
-    
+
         it "should return no conflicts" $
             numberOfConflicts toyGraph coloring2 `shouldBe` 0 
+    describe "maxDegree" $
+        it "the two functions are equal" $ do
+            mm <- maxDegree' toyGraph
+            maxDegree toyGraph `shouldBe` mm
