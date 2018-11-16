@@ -13,17 +13,17 @@ type Time        = Int
 
 initialCandidate :: Graph -> Int -> IO Coloring
 initialCandidate g numberOfColors = do
-    gen <- getStdGen
-    let colors = randomRs (1, numberOfColors)
+    gen          <- getStdGen
+    let colors   = randomRs (1, numberOfColors) gen
     let coloring = V.fromList $ take (nrows g) colors
     pure coloring
 
 neighbor :: Graph -> Int -> Coloring -> IO Coloring
-neighbor g numberOfColors = do
-    gen      <- getStdGen
-    (v, gen) <- randomR (0, (nrows g) - 1) gen
-    (c, gen) <- randomR (1, numberOfColors) gen 
-    pure undefined
+neighbor g numberOfColors coloring = do
+    gen          <- getStdGen
+    let (i, g1) = randomR (0, (nrows g) - 1) gen
+    let (c, _)  = randomR (1, numberOfColors) g1
+    pure $ undefined
 
 initTemperature :: Temp 
 initTemperature = undefined
