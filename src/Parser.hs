@@ -2,10 +2,11 @@ module Parser where
 
 import qualified Data.Text as T
 import qualified Data.Text.Read as T
-import Data.Either (fromRight)
+import Data.Either
 import Data.Matrix
 import Problem
 import qualified Text.Parsec            as P
+import qualified Text.Parsec.Error      as P
 import qualified Text.Parsec.Combinator as C
 import           Text.Parsec.String   (parseFromFile)
 
@@ -13,9 +14,10 @@ type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
 parseVertexFile :: String -> IO Graph
-parseVertexFile = fmap (fromRight emptyMatrix) . parseFromFile vertexFileParser 
-  where
-    emptyMatrix = fromList 0 0 []
+parseVertexFile filename = do result <- parseFromFile vertexFileParser filename
+                              case result of
+                                Left perror -> error $ unlines $ map P.messageString $ P.errorMessages perror
+                                Right graph -> pure graph
 
 whitespace = P.skipMany $ P.oneOf " \t"
 stripped p = p <* whitespace

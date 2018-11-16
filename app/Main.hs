@@ -10,6 +10,7 @@ main :: IO ()
 main = do greeting
           filename <- askForFileName
           graph <- parseFile filename
+          putStrLn (prettyMatrix graph)
           pure ()
 
 greeting :: IO ()

@@ -1,0 +1,7 @@
+c Created by Marcel for manual testing
+p edge 5 5
+e 1 2
+e 1 5
+e 2 3
+e 2 4
+e 4 5
