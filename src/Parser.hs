@@ -7,7 +7,7 @@ import Data.Matrix
 import Problem
 import qualified Text.Parsec            as P
 import qualified Text.Parsec.Combinator as C
-import           Text.Parsec.String   (parseFromFile)
+import           Text.Parsec.String   (Parser, parseFromFile)
 
 type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
@@ -17,22 +17,33 @@ parseVertexFile = fmap (fromRight emptyMatrix) . parseFromFile vertexFileParser
   where
     emptyMatrix = fromList 0 0 []
 
+whitespace :: Parser ()
 whitespace = P.skipMany $ P.oneOf " \t"
+
+stripped :: Parser a -> Parser a
 stripped p = p <* whitespace
 
+lineType :: Char -> Parser Char
 lineType c = P.char c <* whitespace
 
+number' :: Parser Int
 number' = read <$> P.many1 P.digit
+
+number :: Parser Int
 number = stripped number'
 
+header :: Parser ()
 header = P.skipMany (skipLineOfType 'c')
   where
     skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> P.endOfLine
 
+fileInfo :: Parser Int
 fileInfo = lineType 'p' *> number <* P.manyTill P.anyChar P.endOfLine
 
+vertexRecord :: Parser (Int, Int)
 vertexRecord = lineType 'e' *> ((,) <$> number <*> number) <* P.endOfLine
 
+vertexFileParser :: Parser Graph
 vertexFileParser = do
   header
   numberOfVertices <- fileInfo
