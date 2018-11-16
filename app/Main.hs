@@ -1,36 +1,33 @@
 module Main where
 
-import qualified Data.Text as T
-import qualified Data.Text.IO as T
 import Data.Matrix
-import Loader
 import Parser
 
 headlineFile = "headline.txt"
+filesFolder  = "files"
 
 main :: IO ()
-main = greeting >> askForFile >>= parseFile >> pure ()
+main = do greeting
+          filename <- askForFileName
+          graph <- parseFile filename
+          pure ()
 
 greeting :: IO ()
 greeting = do headline <- readFile headlineFile
               putStrLn headline
               putStrLn "Heuristic Graph Coloring"
-              putStrLn "by Marcel Moosbrugger (2018)"
+              putStrLn "by Cornelius, Giovanni, Marcel - Munihac (2018)"
               putStrLn ""
 
-askForFile :: IO T.Text
-askForFile = do putStrLn "Name of DIMACS graph file:"
-                name <- getLine
-                putStrLn ""
-                putStrLn "Loading file ..."
-                file <- loadFile $ name
-                putStrLn "... File loaded!"
-                putStrLn ""
-                pure file
+askForFileName :: IO String
+askForFileName = do putStrLn "Name of DIMACS graph file:"
+                    filename <- getLine
+                    putStrLn ""
+                    pure filename
 
-parseFile :: T.Text -> IO (Matrix Int)
-parseFile text = do putStrLn "Parsing file ..."
-                    matrix <- parseVertexFile text
-                    putStrLn "... file parsed!"
-                    pure matrix
+parseFile :: String -> IO (Matrix Int)
+parseFile filename = do putStrLn "Parsing file ..."
+                        matrix <- parseVertexFile (filesFolder ++ "/" ++ filename)
+                        putStrLn "... file parsed!"
+                        pure matrix
 

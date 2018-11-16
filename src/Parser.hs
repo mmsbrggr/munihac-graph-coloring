@@ -12,8 +12,8 @@ import           Text.Parsec.String   (parseFromFile)
 type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
-parseVertexFile :: T.Text -> IO Graph
-parseVertexFile = fmap (fromRight emptyMatrix) . parseFromFile vertexFileParser . T.unpack
+parseVertexFile :: String -> IO Graph
+parseVertexFile = fmap (fromRight emptyMatrix) . parseFromFile vertexFileParser 
   where
     emptyMatrix = fromList 0 0 []
 
@@ -37,8 +37,7 @@ vertexFileParser = do
   header
   numberOfVertices <- fileInfo
   edgeData <- P.many1 vertexRecord
-
-  return $ makeGraph numberOfVertices edgeData
+  pure $ makeGraph numberOfVertices edgeData
 
 makeGraph :: Int -> EdgeData -> Graph
 makeGraph nv edgeData = matrix nv nv (createGenerator edgeData)
@@ -47,5 +46,4 @@ createGenerator :: EdgeData -> MatrixGenerator
 createGenerator = foldr folder (const 0)
     where
       folder (v,w) mg ij = if ij == (v,w) || ij == (w,v) then 1 else mg ij
-
 

@@ -51,5 +51,3 @@ tests:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
-    dependecies:
-    - graphcoloring
