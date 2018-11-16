@@ -1,20 +1,21 @@
 module Parser where
 
-import qualified Data.Text as T
-import qualified Data.Text.Read as T
-import Data.Either
-import Data.Matrix
-import Problem
+import           Control.Monad          (void)
+import           Data.Either            (fromRight)
+import           Data.Matrix
+import qualified Data.Text              as T
+import qualified Data.Text.Read         as T
+import           Problem
 import qualified Text.Parsec            as P
-import qualified Text.Parsec.Error      as P
 import qualified Text.Parsec.Combinator as C
-import           Text.Parsec.String   (Parser, parseFromFile)
+import qualified Text.Parsec.Error      as P
+import           Text.Parsec.String     (Parser, parseFromFile)
 
 type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
 parseVertexFile :: String -> IO Graph
-parseVertexFile filename = do result <- parseFromFile vertexFileParser filename
+parseVertexFile filename = do result <- parseFromFile vertexFileParserfilename
                               case result of
                                 Left perror -> error $ unlines $ map P.messageString $ P.errorMessages perror
                                 Right graph -> pure graph
@@ -25,8 +26,8 @@ whitespace = P.skipMany $ P.oneOf " \t"
 stripped :: Parser a -> Parser a
 stripped p = p <* whitespace
 
-lineType :: Char -> Parser Char
-lineType c = P.char c <* whitespace
+lineType :: Char -> Parser ()
+lineType c = P.char c *> whitespace
 
 number' :: Parser Int
 number' = read <$> P.many1 P.digit
@@ -37,7 +38,7 @@ number = stripped number'
 header :: Parser ()
 header = P.skipMany (skipLineOfType 'c')
   where
-    skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> P.endOfLine
+    skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> void P.endOfLine
 
 fileInfo :: Parser Int
 fileInfo = lineType 'p' *> number <* P.manyTill P.anyChar P.endOfLine
