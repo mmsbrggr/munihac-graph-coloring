@@ -15,7 +15,7 @@ type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
 parseVertexFile :: String -> IO Graph
-parseVertexFile filename = do result <- parseFromFile vertexFileParserfilename
+parseVertexFile filename = do result <- parseFromFile vertexFileParser filename
                               case result of
                                 Left perror -> error $ unlines $ map P.messageString $ P.errorMessages perror
                                 Right graph -> pure graph
