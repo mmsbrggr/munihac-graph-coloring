@@ -23,7 +23,7 @@ neighbor g numberOfColors coloring = do
     gen          <- getStdGen
     let (i, g1) = randomR (0, (nrows g) - 1) gen
     let (c, _)  = randomR (1, numberOfColors) g1
-    pure $ undefined
+    pure $ coloring V.// [(i, c)]
 
 initTemperature :: Temp 
 initTemperature = undefined
