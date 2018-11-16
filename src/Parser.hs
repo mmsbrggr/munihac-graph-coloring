@@ -41,7 +41,7 @@ header = P.skipMany (skipLineOfType 'c')
     skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> void P.endOfLine
 
 fileInfo :: Parser Int
-fileInfo = lineType 'p' *> number <* P.manyTill P.anyChar P.endOfLine
+fileInfo = lineType 'p' *> P.string "edge " *> number <* P.manyTill P.anyChar P.endOfLine
 
 vertexRecord :: Parser (Int, Int)
 vertexRecord = lineType 'e' *> ((,) <$> number <*> number) <* P.endOfLine
