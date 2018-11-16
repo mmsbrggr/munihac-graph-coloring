@@ -12,7 +12,7 @@ main :: IO ()
 main = greeting >> askForFile >>= parseFile >> pure ()
 
 greeting :: IO ()
-greeting = do headline <- readFile headlineFile 
+greeting = do headline <- readFile headlineFile
               putStrLn headline
               putStrLn "Heuristic Graph Coloring"
               putStrLn "by Marcel Moosbrugger (2018)"
@@ -30,7 +30,7 @@ askForFile = do putStrLn "Name of DIMACS graph file:"
 
 parseFile :: T.Text -> IO (Matrix Int)
 parseFile text = do putStrLn "Parsing file ..."
-                    let !matrix = parse text
+                    matrix <- parseVertexFile text
                     putStrLn "... file parsed!"
                     pure matrix
 

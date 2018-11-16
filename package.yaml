@@ -25,6 +25,7 @@ dependencies:
 - text
 - matrix
 - vector
+- parsec
 - QuickCheck
 - hspec
 

@@ -2,34 +2,50 @@ module Parser where
 
 import qualified Data.Text as T
 import qualified Data.Text.Read as T
+import Data.Either (fromRight)
 import Data.Matrix
 import Problem
+import qualified Text.Parsec            as P
+import qualified Text.Parsec.Combinator as C
+import           Text.Parsec.String   (parseFromFile)
 
 type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
-parse :: T.Text -> Graph
-parse text = matrix nv nv generator
-    where nv        = numberVertices text
-          generator = createGenerator (edgeData text)
+parseVertexFile :: T.Text -> IO Graph
+parseVertexFile = fmap (fromRight emptyMatrix) . parseFromFile vertexFileParser . T.unpack
+  where
+    emptyMatrix = fromList 0 0 []
 
-numberVertices :: T.Text -> Int
-numberVertices text = convertWord line 2
-    where line = head $ getLinesBeginningWith 'p' text
+whitespace = P.skipMany $ P.oneOf " \t"
+stripped p = p <* whitespace
 
-edgeData :: T.Text -> EdgeData
-edgeData text = map convert lines 
-    where lines     = getLinesBeginningWith 'e' text
-          convert t = (convertWord t 1, convertWord t 2) 
+lineType c = P.char c <* whitespace
 
-convertWord :: T.Text -> Int -> Int
-convertWord t i = read . T.unpack $ (T.words t) !! i
+number' = read <$> P.many1 P.digit
+number = stripped number'
 
-getLinesBeginningWith :: Char -> T.Text -> [T.Text]
-getLinesBeginningWith c t = filter ((==) c .  T.head) $ T.lines t
+header = P.skipMany (skipLineOfType 'c')
+  where
+    skipLineOfType c = (lineType c <* P.manyTill P.anyChar P.endOfLine) P.<|> P.endOfLine
+
+fileInfo = lineType 'p' *> number <* P.manyTill P.anyChar P.endOfLine
+
+vertexRecord = lineType 'e' *> ((,) <$> number <*> number) <* P.endOfLine
+
+vertexFileParser = do
+  header
+  numberOfVertices <- fileInfo
+  edgeData <- P.many1 vertexRecord
+
+  return $ makeGraph numberOfVertices edgeData
+
+makeGraph :: Int -> EdgeData -> Graph
+makeGraph nv edgeData = matrix nv nv (createGenerator edgeData)
 
 createGenerator :: EdgeData -> MatrixGenerator
-createGenerator = foldr folder (\_ -> 0) 
-    where folder (v,w) mg = \ij -> if ij == (v,w) || ij == (w,v) then 1 else mg ij
+createGenerator = foldr folder (const 0)
+    where
+      folder (v,w) mg ij = if ij == (v,w) || ij == (w,v) then 1 else mg ij
 
 
