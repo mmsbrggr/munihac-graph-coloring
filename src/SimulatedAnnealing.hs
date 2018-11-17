@@ -45,7 +45,7 @@ changeTemperature :: Temp -> Temp
 changeTemperature = (*0.9)
 
 stopTemperatureCycle :: Int -> Bool
-stopTemperatureCycle = (> 1000)
+stopTemperatureCycle = (> 10)
 
 stop :: Temp -> Graph -> Coloring -> Bool
 stop t g c

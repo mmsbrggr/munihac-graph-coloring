@@ -32,8 +32,8 @@ spec = do
             numberOfConflicts toyGraph coloring1 `shouldBe` 2
 
         it "should return no conflicts" $
-            numberOfConflicts toyGraph coloring2 `shouldBe` 0 
-    
+            numberOfConflicts toyGraph coloring2 `shouldBe` 0
+
     describe "maxDegree" $
         it "the two functions are equal" $ do
             let mm = maxDegree toyGraph

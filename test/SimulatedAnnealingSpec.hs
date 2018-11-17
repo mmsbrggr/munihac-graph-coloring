@@ -25,7 +25,7 @@ spec = do
 
         it "if scores are equal then it always returns 1" $
             boltzmann 5 5 0.5 `shouldBe` 1
-    
+
     describe "initialCandidate function" $ do
         it "checks length of a 5x5 always returns 5" $ do
             res <- initialCandidate toyGraph 2
