@@ -45,7 +45,6 @@ spec = do
             res2 <- neighbor toyGraph 2 initial
             res1 `shouldNotBe` res2
 
-    describe "neighbor function" $ do
         it "checks at least one color changes" $ do
             res <- neighbor toyGraph 2 toyColoring
             let zipped = V.zipWith (\x y -> if x /= y then 1 else 0) res toyColoring
