@@ -33,11 +33,6 @@ spec = do
             res <- initialCandidate toyGraph 2
             length res `shouldBe` 5
 
-        it "checks the random generator is incremented correctly" $ do
-            res1 <- initialCandidate toyGraph 2
-            res2 <- initialCandidate toyGraph 2
-            res1 `shouldNotBe` res2
-
     describe "neighbot function" $ do
         it "checks the random generator is incremented correctly" $ do
             initial <- initialCandidate toyGraph 2
@@ -49,4 +44,8 @@ spec = do
             res <- neighbor toyGraph 2 toyColoring
             let zipped = V.zipWith (\x y -> if x /= y then 1 else 0) res toyColoring
             V.sum zipped `shouldSatisfy` \x -> x <= 1
+
+    describe "" $ do
+        it "" $ do
+            True `shouldBe` True
 
