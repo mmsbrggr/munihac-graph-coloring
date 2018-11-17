@@ -32,5 +32,5 @@ spec = do
             numberOfConflicts toyGraph coloring2 `shouldBe` 0 
     describe "maxDegree" $
         it "the two functions are equal" $ do
-            mm <- maxDegree' toyGraph
+            let mm = maxDegree toyGraph
             maxDegree toyGraph `shouldBe` mm
