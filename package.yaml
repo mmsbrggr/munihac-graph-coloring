@@ -27,6 +27,7 @@ dependencies:
 - vector
 - parsec
 - random
+- containers
 
 library:
   source-dirs: src
