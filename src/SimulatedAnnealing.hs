@@ -25,8 +25,8 @@ neighbor g numberOfColors coloring = do
     let (c, _)  = randomR (1, numberOfColors) g1
     pure $ coloring V.// [(i, c)]
 
-initTemperature :: Temp 
-initTemperature = 1000.0 
+initTemperature :: Temp
+initTemperature = 1000.0
 
 selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
 selection temp g old new =

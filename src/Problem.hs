@@ -26,7 +26,7 @@ numberOfConflicts g c = foldr (\x c -> if x == 0 then c + 1 else c) 0 conflictma
 
 run' :: Graph -> Temp -> Coloring -> Int -> IO Coloring
 run' g t c i
-  | stop 1 = pure c
+  | stop t g c = pure c
   | stopTemperatureCycle i = run' g (changeTemperature t) c 0
   | otherwise = do
                    perturbation <- neighbor g numChroma c
