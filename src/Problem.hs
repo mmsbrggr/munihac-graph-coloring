@@ -29,5 +29,5 @@ run numcolors g t c i
       run numcolors g newtemp c 0
   | otherwise              = do
       perturbation <- neighbor g numcolors c randomRIO
-      newColoring  <- selection t g c perturbation
+      newColoring  <- selection t g c perturbation randomIO
       run numcolors g t newColoring (i + 1)

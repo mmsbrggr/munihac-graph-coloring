@@ -26,14 +26,14 @@ neighbor g numberOfColors coloring rnd = do
 initTemperature :: Temp
 initTemperature = 1000.0
 
-selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
-selection temp g old new =
+selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Double -> IO Coloring
+selection temp g old new rnd =
     if newScore > oldScore then pure new else resultScore
     where
         newScore = numberOfConflicts g new
         oldScore = numberOfConflicts g old
         resultScore = do
-            random <- randomIO :: IO Double 
+            random <- rnd
             if random < boltzmann newScore oldScore temp then pure new else pure old
 
 boltzmann :: Int -> Int -> Temp -> Double 
