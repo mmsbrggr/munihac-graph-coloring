@@ -14,9 +14,6 @@ maxDegree g = maximum $ multStd g vector
         vector = fromList nodes 1 (repeat 1)
 
 numberOfColors :: Coloring -> Int
-numberOfColors = length . nub . V.toList
-
-numberOfColors :: Coloring -> Int
 numberOfColors = S.size . S.fromList . V.toList
 
 -- | Computes the number of conflicts for a graph and a given coloring:
