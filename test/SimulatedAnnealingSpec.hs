@@ -12,10 +12,10 @@ import           Types
 
 toyGraph :: Graph
 toyGraph = M.fromList 5 5 [ 0, 1, 0, 0, 1
-                        , 1, 0, 1, 1, 0
-                        , 0, 1, 0, 0, 0
-                        , 0, 1, 0, 0, 1
-                        , 1, 0, 0, 1, 0]
+                          , 1, 0, 1, 1, 0
+                          , 0, 1, 0, 0, 0
+                          , 0, 1, 0, 0, 1
+                          , 1, 0, 0, 1, 0]
 
 spec :: Spec
 spec = do

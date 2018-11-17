@@ -10,10 +10,10 @@ import           Utils
 
 toyGraph :: Graph
 toyGraph = M.fromList 5 5 [ 0, 1, 0, 0, 1
-                        , 1, 0, 1, 1, 0
-                        , 0, 1, 0, 0, 0
-                        , 0, 1, 0, 0, 1
-                        , 1, 0, 0, 1, 0]
+                          , 1, 0, 1, 1, 0
+                          , 0, 1, 0, 0, 0
+                          , 0, 1, 0, 0, 1
+                          , 1, 0, 0, 1, 0]
 
 coloring1 :: Coloring
 coloring1 = V.fromList [1, 2, 2, 3, 2]
@@ -33,6 +33,7 @@ spec = do
 
         it "should return no conflicts" $
             numberOfConflicts toyGraph coloring2 `shouldBe` 0 
+    
     describe "maxDegree" $
         it "the two functions are equal" $ do
             let mm = maxDegree toyGraph
