@@ -8,7 +8,7 @@ import           Problem
 
 type OldColoring = Coloring
 type NewColoring = Coloring
-type Temp        = Float
+type Temp        = Double 
 type Time        = Int
 
 initialCandidate :: Graph -> Int -> IO Coloring
@@ -26,7 +26,7 @@ neighbor g numberOfColors coloring = do
     pure $ coloring V.// [(i, c)]
 
 initTemperature :: Temp 
-initTemperature = undefined
+initTemperature = 1000.0 
 
 selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
 selection temp g old new =
@@ -40,10 +40,10 @@ selection temp g old new =
 
         resultScore :: IO Coloring
         resultScore = do
-            random <- randomIO :: IO Float
+            random <- randomIO :: IO Double 
             if random < boltzmann newScore oldScore temp then pure new else pure old
 
-boltzmann :: Int -> Int -> Temp -> Float
+boltzmann :: Int -> Int -> Temp -> Double 
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
 changeTemperature :: Temp -> Temp
@@ -52,6 +52,8 @@ changeTemperature = (*0.9)
 stopTemperatureCycle :: Int -> Bool
 stopTemperatureCycle = (> 1000)
 
-stop :: a -> Bool
-stop = undefined
+stop :: Temp -> Graph -> Coloring -> Bool
+stop t g c
+    | numberOfConflicts g c == 0 = True
+    | otherwise                  = t < 0.00000000001
 
