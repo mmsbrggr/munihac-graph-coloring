@@ -16,6 +16,8 @@ toyGraph = M.fromList 5 5 [ 0, 1, 0, 0, 1
                           , 0, 1, 0, 0, 0
                           , 0, 1, 0, 0, 1
                           , 1, 0, 0, 1, 0]
+toyColoring :: Coloring
+toyColoring = V.fromList [1,2,3,4,5]
 
 spec :: Spec
 spec = do
@@ -42,3 +44,10 @@ spec = do
             res1 <- neighbor toyGraph 2 initial
             res2 <- neighbor toyGraph 2 initial
             res1 `shouldNotBe` res2
+
+    describe "neighbor function" $ do
+        it "checks at least one color changes" $ do
+            res <- neighbor toyGraph 2 toyColoring
+            let zipped = V.zipWith (\x y -> if x /= y then 1 else 0) res toyColoring
+            V.sum zipped `shouldSatisfy` \x -> x <= 1
+
