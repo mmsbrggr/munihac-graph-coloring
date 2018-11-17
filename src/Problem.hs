@@ -8,14 +8,13 @@ runHeuristic :: Graph -> IO Int
 runHeuristic g =
       do
         coloring <- initialCandidate g numChroma
-        result <- run' g initTemperature coloring 0
-        pure $ numberOfColors result
+        run' g initTemperature coloring 0
     where
         numChroma = maxDegree g - 1
 
-run' :: Graph -> Temp -> Coloring -> Int -> IO Coloring
+run' :: Graph -> Temp -> Coloring -> Int -> IO Int
 run' g t c i
-  | stop t g c = pure c
+  | stop t g c = pure $ numberOfColors c
   | stopTemperatureCycle i = run' g (changeTemperature t) c 0
   | otherwise = do
                    perturbation <- neighbor g numChroma c
