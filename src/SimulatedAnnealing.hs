@@ -32,13 +32,8 @@ selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
 selection temp g old new =
     if newScore > oldScore then pure new else resultScore
     where
-        newScore :: Int
         newScore = numberOfConflicts g new
-
-        oldScore :: Int
         oldScore = numberOfConflicts g old
-
-        resultScore :: IO Coloring
         resultScore = do
             random <- randomIO :: IO Double 
             if random < boltzmann newScore oldScore temp then pure new else pure old
