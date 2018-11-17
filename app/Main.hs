@@ -23,8 +23,7 @@ main = do
     pure ()
 
 gossip :: Chan String -> IO ()
-gossip chan =
-      forever $ do
+gossip chan = do
         gossip <- readChan chan
         putStrLn gossip
 
