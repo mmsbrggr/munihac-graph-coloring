@@ -1,8 +1,8 @@
 module Problem where
 
 import           Data.List
-import qualified Data.Map    as M
 import           Data.Matrix
+import qualified Data.Set    as S
 import qualified Data.Vector as V
 
 type Graph    = Matrix Int
@@ -15,9 +15,7 @@ maxDegree g = maximum $ multStd g vector
         vector = fromList nodes 1 (repeat 1)
 
 numberOfColors :: Coloring -> Int
-numberOfColors coloring = length . filter (/= 0). map snd . M.toList $ colorMap
-  where zeroMap = M.fromList $ zip [1.. V.length coloring] (repeat 0)
-        colorMap = foldr (M.adjust (+1)) zeroMap (V.toList coloring)
+numberOfColors = S.size . S.fromList . V.toList
 
 -- | Computes the number of conflicts for a graph and a given coloring:
 -- | It multiplies the adjecency matrix with the coloring diagonal-matrix.
