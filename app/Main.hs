@@ -1,6 +1,10 @@
 module Main where
 
 import Data.Matrix
+import Control.Concurrent (forkIO)
+import Control.Concurrent.Chan
+import Control.Monad (forever, void)
+
 import Parser
 import Types
 import Problem
@@ -9,12 +13,25 @@ headlineFile = "headline.txt"
 filesFolder  = "files"
 
 main :: IO ()
-main = do 
+main = do
     greeting
     filename <- askForFileName
     graph <- parseFile filename
-    solve graph
+    channel <- newChan
+    forkIO $ worker channel graph
+    gossip channel
     pure ()
+
+gossip :: Chan String -> IO ()
+gossip chan =
+      forever $ do
+        gossip <- readChan chan
+        putStrLn gossip
+
+worker :: Chan String -> Graph -> IO ()
+worker channel graph = do
+    chromaticN <- solve graph
+    writeChan channel (show chromaticN)
 
 greeting :: IO ()
 greeting = do 
