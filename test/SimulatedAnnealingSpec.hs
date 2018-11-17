@@ -1,6 +1,8 @@
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module SimulatedAnnealingSpec where
 
-import           Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
+import           Test.Hspec (Spec, describe, it, shouldBe, shouldNotBe, shouldSatisfy)
 import qualified Data.Matrix as M
 import qualified Data.Vector as V
 
@@ -28,3 +30,8 @@ spec = do
         it "checks length of a 5x5 always returns 5" $ do
             res <- initialCandidate toyGraph 2
             length res `shouldBe` 5
+
+        it "checks the random generator is incremented correctly" $ do
+            res1 <- initialCandidate toyGraph 2
+            res2 <- initialCandidate toyGraph 2
+            res1 `shouldNotBe` res2
