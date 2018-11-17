@@ -3,7 +3,6 @@ module Problem where
 import Data.Matrix
 import Data.List
 import qualified Data.Vector as V
-import qualified Debug.Trace as T
 
 type Graph    = Matrix Int
 type Coloring = V.Vector Int
