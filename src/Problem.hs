@@ -1,6 +1,7 @@
 module Problem where
 
 import Data.Matrix
+import Data.List
 import qualified Data.Vector as V
 import qualified Debug.Trace as T
 
@@ -14,7 +15,7 @@ maxDegree g = maximum $ multStd g vector
         vector = fromList nodes 1 (repeat 1)
 
 numberOfColors :: Coloring -> Int
-numberOfColors = V.maximum
+numberOfColors = length . nub . V.toList
 
 -- | Computes the number of conflicts for a graph and a given coloring:
 -- | It multiplies the adjecency matrix with the coloring diagonal-matrix.
