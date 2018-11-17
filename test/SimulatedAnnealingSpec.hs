@@ -22,7 +22,7 @@ toyColoring = V.fromList [1, 2, 3, 4, 5]
 oldToyColoring :: Coloring
 oldToyColoring = V.fromList [5, 4, 3, 2, 1]
 
---toyRandom :: Int -> (Int, Int) -> IO Int
+toyRandom :: Int -> (Int, Int) -> IO Int
 toyRandom x = \_ -> pure x
 
 spec :: Spec
