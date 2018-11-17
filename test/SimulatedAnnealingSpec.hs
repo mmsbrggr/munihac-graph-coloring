@@ -23,6 +23,9 @@ toyColoring = V.fromList [1, 2, 3, 4, 5]
 oldToyColoring :: Coloring
 oldToyColoring = V.fromList [5, 4, 3, 2, 1]
 
+toyRandom :: Int -> (Int, Int) -> IO Int
+toyRandom x = \_ -> return x
+
 spec :: Spec
 spec = do
     describe "Boltzmann function" $ do
@@ -34,14 +37,19 @@ spec = do
 
     describe "initialCandidate function" $ do
         it "checks length of a 5x5 always returns 5" $ do
-            res <- initialCandidate toyGraph 2
+            res <- initialCandidate toyGraph 2 randomRIO
             length res `shouldBe` 5
+
+        it "checks the random generator is incremented correctly" $ do
+             res1 <- initialCandidate toyGraph 2 $ toyRandom 1
+             res2 <- initialCandidate toyGraph 2 $ toyRandom 2
+             res1 `shouldNotBe` res2
 
     describe "neighbot function" $ do
         it "checks the random generator is incremented correctly" $ do
-            initial <- initialCandidate toyGraph 2
-            res1 <- neighbor toyGraph 2 initial randomRIO
-            res2 <- neighbor toyGraph 2 initial randomRIO
+            initial <- initialCandidate toyGraph 2 $ toyRandom 10
+            res1 <- neighbor toyGraph 2 initial $ toyRandom 1
+            res2 <- neighbor toyGraph 2 initial $ toyRandom 2
             res1 `shouldNotBe` res2
 
         it "checks at least one color changes" $ do

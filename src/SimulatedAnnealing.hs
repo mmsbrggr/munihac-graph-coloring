@@ -9,15 +9,12 @@ import           Control.Monad (replicateM)
 import           Types
 import           Utils
 
-type OldColoring = Coloring
-type NewColoring = Coloring
-
-initialCandidate :: Graph -> Int -> IO Coloring
-initialCandidate g numberOfColors = do
-    colors <- replicateM (nrows g) $ randomRIO (1, numberOfColors)
+initialCandidate :: Graph -> Int -> Rnd Int -> IO Coloring
+initialCandidate g numberOfColors rnd = do
+    colors <- replicateM (nrows g) $ rnd (1, numberOfColors)
     pure $ V.fromList colors
 
-neighbor :: Graph -> Int -> Coloring -> ((Int, Int) -> IO Int)-> IO Coloring
+neighbor :: Graph -> Int -> Coloring -> Rnd Int -> IO Coloring
 neighbor g numberOfColors coloring rnd = do
     i <- rnd (0, nrows g - 1)
     c <- rnd (1, numberOfColors)

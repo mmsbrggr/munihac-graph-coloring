@@ -13,7 +13,7 @@ solve g = do
 
 solveForNumColors :: Graph -> Int -> IO Int
 solveForNumColors g numcolors = do
-    coloring <- initialCandidate g numcolors 
+    coloring <- initialCandidate g numcolors randomRIO
     run numcolors g initTemperature coloring 0
 
 run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Int
