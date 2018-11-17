@@ -16,9 +16,10 @@ initialCandidate g numberOfColors rnd = do
 
 neighbor :: Graph -> Int -> Coloring -> Rnd Int -> IO Coloring
 neighbor g numberOfColors coloring rnd = do
-    i <- rnd (0, nrows g - 1)
+    let conflictingNodes = getConflictingNodes g coloring
+    n <- getRandomElement rnd conflictingNodes
     c <- rnd (1, numberOfColors)
-    pure $ coloring V.// [(i, c)]
+    pure $ coloring V.// [(n-1, c)]
 
 initTemperature :: Temp
 initTemperature = 10.0
@@ -38,13 +39,13 @@ boltzmann :: Int -> Int -> Temp -> Double
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
 changeTemperature :: Temp -> Temp
-changeTemperature = (*0.995)
+changeTemperature = (* 0.98)
 
 stopTemperatureCycle :: Int -> Bool
-stopTemperatureCycle = (> 10)
+stopTemperatureCycle = (> 100)
 
 stop :: Temp -> Graph -> Coloring -> Bool
 stop t g c
     | numberOfConflicts g c == 0 = True
-    | otherwise                  = t < 0.01
+    | otherwise                  = t < 0.001
 
