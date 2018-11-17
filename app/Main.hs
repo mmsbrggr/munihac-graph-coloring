@@ -2,6 +2,8 @@ module Main where
 
 import Data.Matrix
 import Parser
+import Types
+import Problem
 
 headlineFile = "headline.txt"
 filesFolder  = "files"
@@ -11,7 +13,7 @@ main = do
     greeting
     filename <- askForFileName
     graph <- parseFile filename
-    putStrLn (prettyMatrix graph)
+    solve graph
     pure ()
 
 greeting :: IO ()
@@ -29,7 +31,7 @@ askForFileName = do
     putStrLn ""
     pure filename
 
-parseFile :: String -> IO (Matrix Int)
+parseFile :: String -> IO Graph 
 parseFile filename = do 
     putStrLn "Parsing file ..."
     matrix <- parseVertexFile (filesFolder ++ "/" ++ filename)

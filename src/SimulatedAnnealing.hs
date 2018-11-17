@@ -40,7 +40,7 @@ boltzmann :: Int -> Int -> Temp -> Double
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
 changeTemperature :: Temp -> Temp
-changeTemperature = (*0.9)
+changeTemperature = (*0.95)
 
 stopTemperatureCycle :: Int -> Bool
 stopTemperatureCycle = (> 10)
