@@ -1,7 +1,9 @@
 module SimulatedAnnealingSpec where
 
 import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
+
 import SimulatedAnnealing
+import Utils
 
 spec :: Spec
 spec =

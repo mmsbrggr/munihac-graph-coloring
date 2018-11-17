@@ -4,12 +4,12 @@ import qualified Data.Vector as V
 import           Data.Matrix
 import           Data.List
 import           System.Random
-import           Problem
+
+import           Types
+import           Utils
 
 type OldColoring = Coloring
 type NewColoring = Coloring
-type Temp        = Double 
-type Time        = Int
 
 initialCandidate :: Graph -> Int -> IO Coloring
 initialCandidate g numberOfColors = do
@@ -21,7 +21,7 @@ initialCandidate g numberOfColors = do
 neighbor :: Graph -> Int -> Coloring -> IO Coloring
 neighbor g numberOfColors coloring = do
     gen          <- getStdGen
-    let (i, g1) = randomR (0, (nrows g) - 1) gen
+    let (i, g1) = randomR (0, nrows g - 1) gen
     let (c, _)  = randomR (1, numberOfColors) g1
     pure $ coloring V.// [(i, c)]
 

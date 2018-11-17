@@ -3,7 +3,10 @@ module ProblemSpec where
 import           Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
 import qualified Data.Matrix as M
 import qualified Data.Vector as V
+
 import           Problem
+import           Types
+import           Utils
 
 toyGraph :: Graph
 toyGraph = M.fromList 5 5 [ 0, 1, 0, 0, 1

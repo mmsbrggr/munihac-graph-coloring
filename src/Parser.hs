@@ -11,6 +11,8 @@ import qualified Text.Parsec.Combinator as C
 import qualified Text.Parsec.Error      as P
 import           Text.Parsec.String     (Parser, parseFromFile)
 
+import           Types
+
 type MatrixGenerator = (Int, Int) -> Int
 type EdgeData        = [(Int, Int)]
 
