@@ -6,19 +6,23 @@ import Types
 import SimulatedAnnealing
 import Utils
 
-solve :: Graph -> IO Int
-solve g = do
-    let numcolors = (maxDegree g) - 1
-    solveForNumColors g numcolors
+solve :: Graph -> IO () 
+solve g = solveForNumColors g ((maxDegree g) - 1) 
 
-solveForNumColors :: Graph -> Int -> IO Int
+solveForNumColors :: Graph -> Int -> IO () 
 solveForNumColors g numcolors = do
-    coloring <- initialCandidate g numcolors 
-    run numcolors g initTemperature coloring 0
+    coloring  <- initialCandidate g numcolors randomRIO
+    candidate <- run numcolors g initTemperature coloring 0
+    putStrLn "Coloring found!"
+    putStrLn $ "Conflicts in coloring: " ++ (show $ numberOfConflicts g coloring)
+    putStrLn $ "Number of colors in coloring: " ++ (show $ numberOfColors coloring)
+    if numberOfConflicts g candidate == 0
+       then solveForNumColors g ((numberOfColors candidate) - 1) 
+       else pure ()
 
-run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Int
+run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Coloring
 run numcolors g t c i
-  | stop t g c             = pure $ numberOfColors c
+  | stop t g c             = pure c
   | stopTemperatureCycle i = do
       putStrLn "Stopping temperature cycle:"
       let newtemp = changeTemperature t
