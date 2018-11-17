@@ -1,5 +1,7 @@
 module Problem where
 
+import System.Random
+
 import Types
 import SimulatedAnnealing
 import Utils
@@ -9,7 +11,7 @@ solve g = solveForNumColors g ((maxDegree g) - 1)
 
 solveForNumColors :: Graph -> Int -> IO () 
 solveForNumColors g numcolors = do
-    coloring  <- initialCandidate g numcolors 
+    coloring  <- initialCandidate g numcolors randomRIO
     candidate <- run numcolors g initTemperature coloring 0
     putStrLn "Coloring found!"
     putStrLn $ "Conflicts in coloring: " ++ (show $ numberOfConflicts g coloring)
@@ -30,6 +32,6 @@ run numcolors g t c i
       putStrLn ""
       run numcolors g newtemp c 0
   | otherwise              = do
-      perturbation <- neighbor g numcolors c
-      newColoring  <- selection t g c perturbation
+      perturbation <- neighbor g numcolors c randomRIO
+      newColoring  <- selection t g c perturbation randomIO
       run numcolors g t newColoring (i + 1)
