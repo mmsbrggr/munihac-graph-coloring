@@ -24,7 +24,7 @@ neighbor g numberOfColors coloring = do
     pure $ coloring V.// [(i, c)]
 
 initTemperature :: Temp
-initTemperature = 1000.0
+initTemperature = 10.0
 
 selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Coloring
 selection temp g old new =
@@ -33,14 +33,15 @@ selection temp g old new =
         newScore = numberOfConflicts g new
         oldScore = numberOfConflicts g old
         resultScore = do
-            random <- randomIO :: IO Double 
-            if random < boltzmann newScore oldScore temp then pure new else pure old
+            random <- randomIO :: IO Double
+            let boltz = boltzmann newScore oldScore temp
+            if random < boltz then pure new else pure old
 
 boltzmann :: Int -> Int -> Temp -> Double 
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
 changeTemperature :: Temp -> Temp
-changeTemperature = (*0.95)
+changeTemperature = (*0.995)
 
 stopTemperatureCycle :: Int -> Bool
 stopTemperatureCycle = (> 10)
@@ -48,5 +49,5 @@ stopTemperatureCycle = (> 10)
 stop :: Temp -> Graph -> Coloring -> Bool
 stop t g c
     | numberOfConflicts g c == 0 = True
-    | otherwise                  = t < 0.00000000001
+    | otherwise                  = t < 0.01
 
