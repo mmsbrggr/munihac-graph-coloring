@@ -9,7 +9,7 @@ runHeuristic g =
       do
         coloring <- initialCandidate g numChroma
         result <- run' g initTemperature coloring 0
-        pure 2
+        pure $ numberOfColors result
     where
         numChroma = maxDegree g - 1
 
