@@ -4,6 +4,7 @@ import qualified Data.Vector as V
 import           Data.Matrix
 import           Data.List
 import           System.Random
+import           Control.Monad (replicateM)
 
 import           Types
 import           Utils
@@ -13,16 +14,13 @@ type NewColoring = Coloring
 
 initialCandidate :: Graph -> Int -> IO Coloring
 initialCandidate g numberOfColors = do
-    gen          <- getStdGen
-    let colors   = randomRs (1, numberOfColors) gen
-    let coloring = V.fromList $ take (nrows g) colors
-    pure coloring
+    colors <- replicateM (nrows g) $ randomRIO (1, numberOfColors)
+    pure $ V.fromList colors
 
 neighbor :: Graph -> Int -> Coloring -> IO Coloring
 neighbor g numberOfColors coloring = do
-    gen          <- getStdGen
-    let (i, g1) = randomR (0, nrows g - 1) gen
-    let (c, _)  = randomR (1, numberOfColors) g1
+    i <- randomRIO (0, nrows g - 1)
+    c <- randomRIO (1, numberOfColors)
     pure $ coloring V.// [(i, c)]
 
 initTemperature :: Temp
