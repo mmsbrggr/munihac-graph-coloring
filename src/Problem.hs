@@ -1,5 +1,7 @@
 module Problem where
 
+import System.Random
+
 import Types
 import SimulatedAnnealing
 import Utils
@@ -26,6 +28,6 @@ run numcolors g t c i
       putStrLn ""
       run numcolors g newtemp c 0
   | otherwise              = do
-      perturbation <- neighbor g numcolors c
+      perturbation <- neighbor g numcolors c randomRIO
       newColoring  <- selection t g c perturbation
       run numcolors g t newColoring (i + 1)
