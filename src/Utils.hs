@@ -11,24 +11,35 @@ import Types
 nodeDegree :: Graph -> Int -> Int
 nodeDegree g i = V.sum $ getRow i g
 
+-- https://www.sciencedirect.com/science/article/pii/S0021980069800104
 maxBound' :: Graph -> Int
-maxBound' g = maximum $ zipWith min (orderedNodesDegrees g) [1..]
+maxBound' g = maximum $ zipWith min (map (+1) $ orderedNodesDegrees g) [1..]
 
 orderedNodesDegrees :: Graph -> [Int]
-orderedNodesDegrees g = sortOn Down $ map ((+1) . nodeDegree g) [1.. nrows g]
+orderedNodesDegrees g = sortOn Down $ map (nodeDegree g) [1.. nrows g]
 
 minBound' :: Graph -> Int -> Int
-minBound' g n | memoizedSigmaSum g n > bigN = minBound' g (n - 1)
-              | otherwise                   = n
+minBound' g j | rhoSum bigN (orderedNodesDegrees g) j < bigN = minBound' g (j + 1)
+              | otherwise                   = j
    where
        bigN = nrows g
 
-memoizedSigmaSum :: Graph -> Int -> Int
-memoizedSigmaSum g = (map rho [0.. ] !!)
-            where
-                bigN = nrows g
-                rho 0 = 0
-                rho n = bigN - (nodeDegree g n + memoizedSigmaSum g (n - 1) + 1)
+rho orderedDegrees bigN j | j == 1 = bigN - head orderedDegrees
+                          | j > 1  = bigN - (orderedDegrees !! (rhoSum bigN orderedDegrees (j - 1) + 1))
+
+
+rhoSum bigN orderedDegrees 1 = rho orderedDegrees bigN 1
+rhoSum bigN orderedDegrees j = rho orderedDegrees bigN j + rhoSum bigN orderedDegrees (j - 1)
+
+-- this could work but needs more tests, then you don't need rho function
+-- rhoSum bigN orderedDegrees j = j + bigN - (orderedDegrees !! (rhoSum bigN orderedDegrees (j - 1) + 1))
+
+--memoizedRhoSum :: Graph -> [Int] -> Int -> Int
+--memoizedRhoSum g orderedDegrees = (map rho [0.. ] !!)
+--            where
+--                bigN = nrows g
+--                rho 0 = 0
+--                rho n = bigN - (orderedDegrees !! (memoizedRhoSum g orderedDegrees (n - 1) + 1))
 
 maxDegree :: Graph -> Int
 maxDegree g = maximum $ multStd g vector

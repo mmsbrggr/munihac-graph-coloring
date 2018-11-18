@@ -22,7 +22,7 @@ solveForNumColors g numcolors = do
        else pure ()
 
 mayIProceedPlease :: Graph -> Coloring -> IO ()
-mayIProceedPlease g candidate | minBound' g (nrows g - 1) < numberOfColors candidate - 1 = pure ()
+mayIProceedPlease g candidate | minBound' g 1 >= numberOfColors candidate = pure ()
                               | otherwise = solveForNumColors g (numberOfColors candidate - 1)
 
 run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Coloring
