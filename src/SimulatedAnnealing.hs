@@ -5,47 +5,57 @@ import           Data.Matrix
 import           Data.List
 import           System.Random
 import           Control.Monad (replicateM)
+import           Control.Monad.State.Lazy
 
 import           Types
 import           Utils
 
-initialCandidate :: Graph -> Int -> Rnd Int -> IO Coloring
-initialCandidate g numberOfColors rnd = do
-    colors <- replicateM (nrows g) $ rnd (1, numberOfColors)
-    pure $ V.fromList colors
+setInitialColoring :: Rnd Int -> SAState () 
+setInitialColoring rnd = do
+    ps <- get
+    colors <- liftIO $ replicateM (nrows $ graph ps) $ rnd (1, colors ps)
+    put (ps {currentColoring = V.fromList colors})
 
-neighbor :: Graph -> Int -> Coloring -> Rnd Int -> IO Coloring
-neighbor g numberOfColors coloring rnd = do
-    let conflictingNodes = getConflictingNodes g coloring
-    n <- getRandomElement rnd conflictingNodes
-    c <- rnd (1, numberOfColors)
-    pure $ coloring V.// [(n-1, c)]
+neighbor :: Rnd Int -> SAState Coloring
+neighbor rnd = do
+    ps <- get
+    let conflictingNodes = getConflictingNodes (graph ps) (currentColoring ps)
+    n <- liftIO $ getRandomElement rnd conflictingNodes
+    c <- liftIO $ rnd (1, colors ps)
+    pure $ (currentColoring ps) V.// [(n-1, c)]
 
-initTemperature :: Temp
-initTemperature = 10.0
+setInitialTemperature :: SAState ()
+setInitialTemperature = get >>= \ps -> put (ps {currentTemp = 10.0})
 
-selection :: Temp -> Graph -> OldColoring -> NewColoring -> IO Double -> IO Coloring
-selection temp g old new rnd =
-    if newScore > oldScore then pure new else resultScore
-    where
-        newScore = numberOfConflicts g new
-        oldScore = numberOfConflicts g old
-        resultScore = do
-            random <- rnd
-            let boltz = boltzmann newScore oldScore temp
-            if random < boltz then pure new else pure old
+setNewColoring :: Coloring -> IO Double -> SAState () 
+setNewColoring newcoloring rnd = do
+    ps <- get
+    let oldScore = numberOfConflicts (graph ps) (currentColoring ps)
+    let newScore = numberOfConflicts (graph ps) newcoloring
+    if newScore > oldScore
+    then put (ps {currentColoring = newcoloring})  
+    else do
+        random <- liftIO $ rnd
+        let boltz = boltzmann newScore oldScore (currentTemp ps)
+        if random < boltz then put (ps {currentColoring = newcoloring}) else pure ()
 
 boltzmann :: Int -> Int -> Temp -> Double 
 boltzmann newScore oldScore temp = exp $ fromIntegral (newScore - oldScore) / temp
 
-changeTemperature :: Temp -> Temp
-changeTemperature = (* 0.98)
+changeTemperature :: SAState ()
+changeTemperature = get >>= \ps -> put (ps {currentTemp = (currentTemp ps) * 0.98})
 
-stopTemperatureCycle :: Int -> Bool
-stopTemperatureCycle = (> 100)
+resetTime :: SAState ()
+resetTime = get >>= \ps -> put (ps {currentTime = 0})
 
-stop :: Temp -> Graph -> Coloring -> Bool
-stop t g c
-    | numberOfConflicts g c == 0 = True
-    | otherwise                  = t < 0.001
+increaseTime :: SAState ()
+increaseTime = get >>= \ps -> put (ps {currentTime = currentTime ps + 1})
 
+stopTemperatureCycle :: ProblemState -> Bool
+stopTemperatureCycle = (> 100) . currentTime
+
+stop :: ProblemState -> Bool
+stop ps
+  | numberOfConflicts (graph ps) (currentColoring ps) == 0 = True
+  | otherwise = currentTemp ps < 0.001
+    

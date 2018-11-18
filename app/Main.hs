@@ -37,7 +37,7 @@ greeting = do
     headline <- readFile headlineFile
     putStrLn headline
     putStrLn "Heuristic Graph Coloring"
-    putStrLn "by Cornelius, Giovanni, Marcel - Munihac (2018)"
+    putStrLn "Munihac (2018)"
     putStrLn ""
 
 askForFileName :: IO String

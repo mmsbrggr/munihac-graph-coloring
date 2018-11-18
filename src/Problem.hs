@@ -1,37 +1,68 @@
 module Problem where
 
 import System.Random
+import Control.Monad.State.Lazy
+import qualified Data.Vector as V
 
 import Types
 import SimulatedAnnealing
 import Utils
 
-solve :: Graph -> IO () 
-solve g = solveForNumColors g ((maxDegree g) - 1) 
 
-solveForNumColors :: Graph -> Int -> IO () 
-solveForNumColors g numcolors = do
-    coloring  <- initialCandidate g numcolors randomRIO
-    candidate <- run numcolors g initTemperature coloring 0
-    putStrLn "Coloring found!"
-    putStrLn $ "Conflicts in coloring: " ++ (show $ numberOfConflicts g candidate)
-    putStrLn $ "Number of colors in coloring: " ++ (show $ numberOfColors candidate)
-    if numberOfConflicts g candidate == 0
-       then solveForNumColors g ((numberOfColors candidate) - 1) 
-       else pure ()
+solve :: Graph -> IO ()
+solve g = let ps = ProblemState
+                     { graph            = g
+                     , colors           = (maxDegree g) - 1
+                     , currentTime      = 0
+                     , currentTemp      = 0
+                     , currentColoring  = V.empty
+                     , smallestSolution = Nothing
+                     }
+          in do
+              (finalstate, _) <- runStateT solveProblemState ps
+              case smallestSolution finalstate of
+                  Nothing -> putStrLn "No coloring found!"
+                  Just ss -> do
+                        putStrLn "Best solution data:"
+                        putStrLn $ "Colors used: " ++ (show $ numberOfColors ss)
+              putStrLn ""
+              pure ()
 
-run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Coloring
-run numcolors g t c i
-  | stop t g c = pure c
-  | stopTemperatureCycle i = do
-      putStrLn "Stopping temperature cycle:"
-      let newtemp = changeTemperature t
-      putStrLn $ "New temperature: " ++ (show t)
-      putStrLn $ "Conflicts in coloring: " ++ (show $ numberOfConflicts g c)
-      putStrLn $ "Number of colors in coloring: " ++ (show $ numberOfColors c)
-      putStrLn ""
-      run numcolors g newtemp c 0
-  | otherwise = do
-      perturbation <- neighbor g numcolors c randomRIO
-      newColoring  <- selection t g c perturbation randomIO
-      run numcolors g t newColoring (i + 1)
+solveProblemState :: SAState ProblemState 
+solveProblemState = do
+    setInitialColoring randomRIO
+    setInitialTemperature
+    resetTime
+    run
+    ps <- get
+    if numberOfConflicts (graph ps) (currentColoring ps) == 0
+       then do
+           put (ps
+                { smallestSolution = Just $ currentColoring ps
+                , colors           = colors ps - 1
+                })
+           solveProblemState
+       else get
+
+run :: SAState ()
+run = do
+    ps <- get
+    if stop ps then pure ()
+    else if stopTemperatureCycle ps
+        then do
+            liftIO $ (do
+                putStrLn "Stopping temperature cycle!"
+                putStrLn $ "Current temperature: " ++ (show $ currentTemp ps) 
+                putStrLn "Current coloring data:"
+                putStrLn $ "Colors used: " ++ (show $ numberOfColors (currentColoring ps))
+                putStrLn $ "Conflicts: " ++ (show $ numberOfConflicts (graph ps) (currentColoring ps))
+                putStrLn "" 
+                )
+            changeTemperature
+            resetTime
+            run
+    else do
+      newcoloring <- neighbor randomRIO
+      setNewColoring newcoloring randomIO
+      increaseTime
+      run
