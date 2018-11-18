@@ -2,6 +2,7 @@ module Problem where
 
 import System.Random
 
+import Data.Matrix (nrows)
 import Types
 import SimulatedAnnealing
 import Utils
@@ -17,8 +18,12 @@ solveForNumColors g numcolors = do
     putStrLn $ "Conflicts in coloring: " ++ (show $ numberOfConflicts g candidate)
     putStrLn $ "Number of colors in coloring: " ++ (show $ numberOfColors candidate)
     if numberOfConflicts g candidate == 0
-       then solveForNumColors g ((numberOfColors candidate) - 1) 
+       then mayIProceedPlease g candidate
        else pure ()
+
+mayIProceedPlease :: Graph -> Coloring -> IO ()
+mayIProceedPlease g candidate | minBound' g (nrows g - 1) < numberOfColors candidate - 1 = pure ()
+                              | otherwise = solveForNumColors g (numberOfColors candidate - 1)
 
 run :: Int -> Graph -> Temp -> Coloring -> Int -> IO Coloring
 run numcolors g t c i

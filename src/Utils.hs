@@ -7,6 +7,22 @@ import qualified Data.Set    as S
 
 import Types
 
+nodeDegree :: Graph -> Int -> Int
+nodeDegree g i = V.sum $ getRow i g
+
+minBound' :: Graph -> Int -> Int
+minBound' g n | memoizedSigmaSum g n > bigN = minBound' g (n - 1)
+              | otherwise                   = n
+   where
+       bigN = nrows g
+
+memoizedSigmaSum :: Graph -> Int -> Int
+memoizedSigmaSum g = (map rho [0.. ] !!)
+            where
+                bigN = nrows g
+                rho 0 = 0
+                rho n = bigN - (nodeDegree g n + memoizedSigmaSum g (n - 1) + 1)
+
 maxDegree :: Graph -> Int
 maxDegree g = maximum $ multStd g vector
     where
@@ -39,4 +55,3 @@ getRandomElement :: Rnd Int -> V.Vector a -> IO a
 getRandomElement rnd v = do
     i <- rnd (0, V.length v - 1)
     pure $ v V.! i
-
