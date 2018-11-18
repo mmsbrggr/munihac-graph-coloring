@@ -44,7 +44,7 @@ spec = do
              res2 <- initialCandidate toyGraph 2 $ toyRandom 2
              res1 `shouldNotBe` res2
 
-    describe "neighbot function" $ do
+    describe "neighbor function" $ do
         it "checks the random generator is incremented correctly" $ do
             initial <- initialCandidate toyGraph 2 $ toyRandom 10
             res1 <- neighbor toyGraph 2 initial $ toyRandom 1
