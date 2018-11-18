@@ -55,3 +55,8 @@ spec = do
 
         it "minBound" $
             minBound' toyGraph (M.nrows toyGraph - 1) `shouldBe` 4
+    describe "maxBound" $ do
+        it "ordered degrees" $
+            orderedNodesDegrees toyGraph `shouldBe` [4, 3, 3, 3, 2]
+        it "maxBound" $
+            maxBound' toyGraph `shouldBe` 3

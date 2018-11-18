@@ -2,6 +2,7 @@ module Utils where
 
 import Data.List
 import Data.Matrix
+import Data.Ord
 import qualified Data.Vector as V
 import qualified Data.Set    as S
 
@@ -9,6 +10,12 @@ import Types
 
 nodeDegree :: Graph -> Int -> Int
 nodeDegree g i = V.sum $ getRow i g
+
+maxBound' :: Graph -> Int
+maxBound' g = maximum $ zipWith min (orderedNodesDegrees g) [1..]
+
+orderedNodesDegrees :: Graph -> [Int]
+orderedNodesDegrees g = sortOn Down $ map ((+1) . nodeDegree g) [1.. nrows g]
 
 minBound' :: Graph -> Int -> Int
 minBound' g n | memoizedSigmaSum g n > bigN = minBound' g (n - 1)

@@ -7,10 +7,10 @@ import Types
 import SimulatedAnnealing
 import Utils
 
-solve :: Graph -> IO () 
-solve g = solveForNumColors g ((maxDegree g) - 1) 
+solve :: Graph -> IO ()
+solve g = solveForNumColors g (maxBound' g)
 
-solveForNumColors :: Graph -> Int -> IO () 
+solveForNumColors :: Graph -> Int -> IO ()
 solveForNumColors g numcolors = do
     coloring  <- initialCandidate g numcolors randomRIO
     candidate <- run numcolors g initTemperature coloring 0
