@@ -1,8 +1,10 @@
 module Visualisation where
 
+import           Control.Monad
 import           Data.Matrix
 import qualified Data.Vector    as V
 import           Graphics.Gloss
+import           System.Random
 
 import           Types
 import           Utils
@@ -37,9 +39,9 @@ coloringToPic graph c pos = pictures $ V.toList $ fmap (\((px, py), gColor)
         cNum = numberOfColors c
         moveNode x y = translate (fromIntegral x) (fromIntegral y)
 
--- TODO: Implement, maybe use randomness
 positionNodes :: Int -> IO Positioning
-positionNodes numNodes = undefined
+positionNodes numNodes = liftM2 V.zip
+  (V.replicateM numNodes (randomIO :: IO Int)) (V.replicateM numNodes (randomIO :: IO Int))
 
 -- some Example
 drawing :: Picture
