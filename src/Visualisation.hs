@@ -29,7 +29,7 @@ dot = circleSolid 10
 -- TODO: Build a more sophisticated version of this
 colorNode :: Int -> Int -> Color
 colorNode gColor cNum = makeColor
-  ((fromIntegral gColor) / (fromIntegral cNum)) 0 0 1
+  (fromIntegral gColor / fromIntegral cNum) 0 0 1
 
 -- TODO: Make this monster more readable
 coloringToPic :: Graph -> Coloring -> Positioning -> Picture
@@ -44,7 +44,7 @@ coloringToPic graph c pos = pictures $ edgePic : nodePic
           . color (colorNode gColor cNum) $ dot) (V.zip pos c)
 
         mRows :: V.Vector (V.Vector Int)
-        mRows = fmap ((flip getRow) graph) $ V.fromList [1..gSize]
+        mRows = flip getRow graph <$> V.fromList [1..gSize]
 
         adjIndices :: V.Vector Int -> Int -> [Int]
         adjIndices vec nNum = snd $ foldl' (\(n, xs) adj
@@ -52,14 +52,14 @@ coloringToPic graph c pos = pictures $ edgePic : nodePic
           (nNum + 1, []) (drop (nNum + 1) . V.toList $ vec)
 
         edgesForNode :: Int -> [Int] -> [[(Int, Int)]]
-        edgesForNode node nodes = map (\x -> map (pos V.!) [node, x]) nodes
+        edgesForNode node = map (\x -> map (pos V.!) [node, x])
 
         edges :: [[(Int, Int)]]
         edges = concatMap (uncurry edgesForNode) . zip [0..]
           . map (uncurry adjIndices) $ zip (V.toList mRows) [0..]
 
         edgePic :: Picture
-        edgePic = pictures . map line $ (flxy edges)
+        edgePic = pictures . map line (flxy edges)
           where flxy = map $ map (\(x, y )-> (toRange x, toRange y))
 
 positionNodes :: Int -> IO Positioning
@@ -68,4 +68,4 @@ positionNodes numNodes = liftM2 V.zip
   (V.replicateM numNodes (randomIO :: IO Int))
 
 visualize :: Picture -> IO ()
-visualize drawing = display window background drawing
+visualize = display window background
