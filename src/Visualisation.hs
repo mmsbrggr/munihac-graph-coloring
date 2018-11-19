@@ -59,7 +59,7 @@ coloringToPic graph c pos = pictures $ edgePic : nodePic
           . map (uncurry adjIndices) $ zip (V.toList mRows) [0..]
 
         edgePic :: Picture
-        edgePic = pictures . map line (flxy edges)
+        edgePic = pictures . map line $ flxy edges
           where flxy = map $ map (\(x, y )-> (toRange x, toRange y))
 
 positionNodes :: Int -> IO Positioning
