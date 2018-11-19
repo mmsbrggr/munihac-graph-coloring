@@ -50,13 +50,10 @@ spec = do
         it "degree checks out" $
             nodeDegree toyGraph 2 `shouldBe` 3
 
-        it "sigma" $
-            memoizedSigmaSum toyGraph 5 `shouldBe` 4
-
         it "minBound" $
-            minBound' toyGraph (M.nrows toyGraph - 1) `shouldBe` 4
+            minBound' toyGraph 1 `shouldBe` 2
     describe "maxBound" $ do
         it "ordered degrees" $
-            orderedNodesDegrees toyGraph `shouldBe` [4, 3, 3, 3, 2]
+            orderedNodesDegrees toyGraph `shouldBe` [3, 2, 2, 2, 1]
         it "maxBound" $
             maxBound' toyGraph `shouldBe` 3
