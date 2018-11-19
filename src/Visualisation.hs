@@ -1,7 +1,5 @@
 module Visualisation where
 
-import qualified Debug.Trace    as D
-
 import           Control.Monad
 import           Data.Foldable
 import           Data.Matrix
@@ -42,8 +40,8 @@ coloringToPic graph c pos = pictures $ edgePic : nodePic
         toRange x = fromIntegral $ mod x height
 
         nodePic :: [Picture]
-        nodePic = V.toList $ fmap (\((px, py), gColor)
-          -> moveNode px py . color (colorNode gColor cNum) $ dot)  (D.trace (show $ V.zip (fmap (\(x,y)->(toRange x, toRange y)) pos) c) (V.zip pos c))
+        nodePic = V.toList $ fmap (\((px, py), gColor) -> moveNode px py
+          . color (colorNode gColor cNum) $ dot) (V.zip pos c)
 
         mRows :: V.Vector (V.Vector Int)
         mRows = fmap ((flip getRow) graph) $ V.fromList [1..gSize]
@@ -61,12 +59,13 @@ coloringToPic graph c pos = pictures $ edgePic : nodePic
           . map (uncurry adjIndices) $ zip (V.toList mRows) [0..]
 
         edgePic :: Picture
-        edgePic = pictures . map line $ D.trace (show $ flxy edges) (flxy edges)
+        edgePic = pictures . map line $ (flxy edges)
           where flxy = map $ map (\(x, y )-> (toRange x, toRange y))
 
 positionNodes :: Int -> IO Positioning
 positionNodes numNodes = liftM2 V.zip
-  (V.replicateM numNodes (randomIO :: IO Int)) (V.replicateM numNodes (randomIO :: IO Int))
+  (V.replicateM numNodes (randomIO :: IO Int))
+  (V.replicateM numNodes (randomIO :: IO Int))
 
 visualize :: Picture -> IO ()
 visualize drawing = display window background drawing
